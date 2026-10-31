@@ -1,7 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Project from '../models/Project.js';
-import { defaultProjects } from '../config/seedData.js';
 import auth from '../middleware/auth.js';
 
 const router = express.Router();
@@ -10,17 +9,10 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     if (mongoose.connection.readyState === 1) {
-      let projects = await Project.find().sort({ order: 1, createdAt: 1 });
-
-      // If database has no projects yet, seed initial default projects
-      if (projects.length === 0) {
-        projects = await Project.insertMany(defaultProjects);
-      }
-
+      const projects = await Project.find().sort({ order: 1, createdAt: 1 });
       return res.json({ success: true, count: projects.length, data: projects });
     } else {
-      // Return default data if DB is pending connection
-      return res.json({ success: true, count: defaultProjects.length, data: defaultProjects });
+      return res.json({ success: true, count: 0, data: [] });
     }
   } catch (error) {
     console.error('Fetch projects error:', error);

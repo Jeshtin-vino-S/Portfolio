@@ -68,7 +68,7 @@ export default function App() {
           }
         }
       } catch (err) {
-        console.log('Note: Backend offline or database connecting.');
+        console.log('Error fetching live portfolio data:', err);
       } finally {
         setLoadingData(false);
       }
@@ -357,11 +357,11 @@ export default function App() {
               {loadingData && projects.length === 0 ? (
                 <div style={{ padding: '3.5rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }} className="mono">
                   <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '0.6rem', color: 'var(--accent-lime)' }}></i>
-                  // Loading live projects from database...
+                  // Connecting to MongoDB & fetching projects...
                 </div>
               ) : projects.length === 0 ? (
                 <div style={{ padding: '3.5rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }} className="mono">
-                  // No projects found in database. Add new projects via <a href="/admin" onClick={(e) => { e.preventDefault(); setIsAdminView(true); }} style={{ color: 'var(--accent-lime)', textDecoration: 'underline' }}>Admin CMS</a>.
+                  // No projects in database. Add new projects anytime in the <a href="/admin" onClick={(e) => { e.preventDefault(); setIsAdminView(true); }} style={{ color: 'var(--accent-lime)', textDecoration: 'underline' }}>Admin CMS</a>.
                 </div>
               ) : (
                 projects.map((project, idx) => (

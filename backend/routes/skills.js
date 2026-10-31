@@ -1,7 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Skill from '../models/Skill.js';
-import { defaultSkills } from '../config/seedData.js';
 import auth from '../middleware/auth.js';
 
 const router = express.Router();
@@ -10,16 +9,10 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     if (mongoose.connection.readyState === 1) {
-      let skills = await Skill.find().sort({ order: 1, createdAt: 1 });
-
-      // Seed if empty
-      if (skills.length === 0) {
-        skills = await Skill.insertMany(defaultSkills);
-      }
-
+      const skills = await Skill.find().sort({ order: 1, createdAt: 1 });
       return res.json({ success: true, count: skills.length, data: skills });
     } else {
-      return res.json({ success: true, count: defaultSkills.length, data: defaultSkills });
+      return res.json({ success: true, count: 0, data: [] });
     }
   } catch (error) {
     console.error('Fetch skills error:', error);

@@ -44,8 +44,8 @@ router.post('/login', async (req, res) => {
       if (count === 0) {
         admin = new Admin({
           username: 'admin',
-          email: 'jestinvino824@gmail.com',
-          password: 'Jeshtin@03'
+          email: 'admin@gmail.com',
+          password: 'admin@123'
         });
         await admin.save();
       } else {

@@ -7,8 +7,8 @@ export const initAdminUser = async () => {
       // Create initial Admin in MongoDB Atlas with secure hashed password
       const initialAdmin = new Admin({
         username: 'admin',
-        email: 'jestinvino824@gmail.com',
-        password: 'Jeshtin@03'
+        email: 'admin@gmail.com',
+        password: 'admin@123'
       });
       await initialAdmin.save();
       console.log('👑 Initial Admin user created in MongoDB Atlas (username: admin)');

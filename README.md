@@ -10,7 +10,7 @@ PORTFOLIO/
 ├── backend/                  # Node.js + Express.js API
 │   ├── config/
 │   │   ├── db.js             # Mongoose connection to MongoDB Atlas
-│   │   └── seedData.js       # Initial default data for projects & skills
+│   │   └── initAdmin.js      # Initial admin verification in MongoDB
 │   ├── models/
 │   │   ├── Message.js        # Contact Form Messages Schema
 │   │   ├── Project.js        # Projects Schema
