@@ -897,47 +897,90 @@ footer.site-footer {
 }
 
 /* ==========================================================================
-   RESPONSIVE DESIGN (Down to 360px)
+   RESPONSIVE DESIGN (Full Screen Coverage: 320px up to 4K)
    ========================================================================== */
-@media screen and (max-width: 992px) {
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tablet Screens (<= 1024px) */
+@media screen and (max-width: 1024px) {
   .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 48px;
-  }
-
-  .work-row {
-    grid-template-columns: 50px 1fr;
-    gap: 16px;
-  }
-
-  .work-outcome {
-    grid-column: 2 / -1;
-    border-left: none;
-    padding-left: 0;
-    margin-top: 4px;
-  }
-
-  .work-links {
-    grid-column: 2 / -1;
-    margin-top: 8px;
-  }
-
-  .skills-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .about-grid {
     grid-template-columns: 1fr;
     gap: 40px;
   }
 
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
   .about-photo-wrapper {
-    max-width: 280px;
+    max-width: 260px;
     margin: 0 auto;
+  }
+
+  .admin-manager-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
   }
 }
 
+/* Mobile & Phablet Screens (<= 768px) */
 @media screen and (max-width: 768px) {
+  section {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    font-size: clamp(26px, 7vw, 36px);
+    margin-bottom: 32px;
+  }
+
+  .section-label {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* Header Mobile */
+  header.site-header {
+    height: 64px;
+  }
+
+  .header-inner {
+    height: 64px;
+  }
+
+  .header-right {
+    gap: 12px;
+  }
+
+  .status-badge {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+
   header.site-header .nav-links {
     display: none;
   }
@@ -946,74 +989,345 @@ footer.site-footer {
     display: flex;
     flex-direction: column;
     position: absolute;
-    top: 72px;
+    top: 64px;
     left: 0;
     width: 100%;
     background: #0E0F13;
-    padding: 24px;
+    padding: 20px 20px 28px;
     border-bottom: 1px solid var(--border);
-    gap: 20px;
-    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85);
+    animation: slideDown 200ms ease;
+    z-index: 999;
   }
 
-  .mobile-menu-btn {
+  header.site-header .nav-links.mobile-open a {
+    font-size: 15px;
+    padding: 10px 0;
+    width: 100%;
+    border-bottom: 1px solid rgba(242, 240, 234, 0.06);
     display: block;
   }
 
-  .status-badge {
-    padding: 4px 10px;
-    font-size: 11px;
-  }
-
-  section {
-    padding: 70px 0;
-  }
-
+  /* Hero Mobile */
   .hero-section {
-    padding: 80px 0 60px;
+    padding: 50px 0 40px;
+  }
+
+  .hero-content {
+    gap: 20px;
+  }
+
+  .hero-headline {
+    font-size: clamp(30px, 8.5vw, 48px);
+    line-height: 1.1;
+  }
+
+  .hero-subtext {
+    font-size: 15px;
+    line-height: 1.6;
   }
 
   .hero-actions {
     flex-direction: column;
-    align-items: stretch;
+    width: 100%;
+    gap: 12px;
+    margin-top: 4px;
   }
 
   .hero-actions .btn-primary,
   .hero-actions .btn-secondary {
+    width: 100%;
     justify-content: center;
+    padding: 14px 20px;
+    font-size: 14px;
   }
 
-  .about-stats {
-    grid-template-columns: 1fr;
+  .code-card-body {
+    padding: 18px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  /* Selected Work Mobile Card Layout */
+  .work-list {
     gap: 16px;
   }
 
-  .contact-bottom {
+  .work-row {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding: 22px 18px;
+    gap: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0;
   }
 
-  .social-links {
-    flex-wrap: wrap;
+  .work-row:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .work-row:hover {
+    padding-left: 18px;
+    transform: translateY(-2px);
+  }
+
+  .work-num {
+    font-size: 13px;
+    color: var(--lime);
+    background: var(--lime-dim);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .work-title {
+    font-size: 19px;
+  }
+
+  .work-tagline {
+    font-size: 11.5px;
+  }
+
+  .work-outcome {
+    border-left: none;
+    padding-left: 0;
+    margin: 2px 0 6px;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .work-links {
+    display: flex;
     width: 100%;
+    gap: 10px;
+    margin-top: 4px;
   }
 
-  .social-link {
+  .work-link {
     flex: 1;
     justify-content: center;
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+
+  /* About Mobile */
+  .about-lead {
+    font-size: 19px;
+    line-height: 1.4;
+  }
+
+  .about-body {
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 16px;
+  }
+
+  .stat-value {
+    font-size: 22px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  /* Contact & Form Mobile */
+  .giant-email-wrap {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 20px 0;
+  }
+
+  .giant-email {
+    font-size: clamp(19px, 5.2vw, 36px);
+  }
+
+  .copy-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
   }
 
   .contact-form-wrap {
-    padding: 24px 20px;
+    padding: 22px 16px;
+    margin-top: 24px;
+  }
+
+  .contact-form-title {
+    font-size: 20px;
   }
 
   .form-row {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 14px;
+  }
+
+  .form-input,
+  .form-textarea {
+    font-size: 16px; /* Prevents auto-zoom in mobile browsers */
+    padding: 12px 14px;
   }
 
   .btn-submit {
     width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 14px;
+  }
+
+  .contact-bottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .social-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+  }
+
+  .social-link {
+    justify-content: center;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .location-tag {
+    text-align: center;
+    font-size: 12px;
+  }
+
+  footer.site-footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+    padding: 24px 0;
+  }
+
+  /* Admin CMS Mobile */
+  .admin-login-card {
+    padding: 28px 18px;
+  }
+
+  .admin-navbar .container {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .admin-navbar .container > div:last-child {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .admin-stats-bar {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .admin-stat-card {
+    padding: 16px 14px;
+  }
+
+  .admin-stat-num {
+    font-size: 24px;
+  }
+
+  .admin-tabs {
+    padding-bottom: 8px;
+    gap: 8px;
+  }
+
+  .admin-tab-btn {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+  .messages-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form-panel,
+  .admin-list-panel {
+    padding: 20px 16px;
+  }
+
+  .admin-item-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .item-card-right {
+    align-self: flex-end;
+  }
+}
+
+/* Small Smartphone Screens (<= 480px down to 320px) */
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  section {
+    padding: 44px 0;
+  }
+
+  .skills-col {
+    padding: 20px 16px;
+  }
+
+  .skills-col-header {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+  }
+
+  .skills-col-header h3 {
+    font-size: 16px;
+  }
+
+  .skills-list li {
+    font-size: 12px;
+  }
+
+  .about-photo-wrapper {
+    max-width: 220px;
+  }
+
+  .admin-stats-bar {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .status-badge span:last-child {
+    display: none;
+  }
+
+  .status-badge {
+    padding: 6px;
+    border-radius: 50%;
+  }
+
+  .about-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .social-links {
+    grid-template-columns: 1fr;
   }
 }
 
