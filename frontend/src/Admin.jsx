@@ -48,6 +48,14 @@ export default function Admin({ onBackToPortfolio }) {
     level: ''
   });
 
+  // Edit Project State (Modal)
+  const [editingProject, setEditingProject] = useState(null);
+  const [isUpdatingProject, setIsUpdatingProject] = useState(false);
+
+  // Edit Skill State (Modal)
+  const [editingSkill, setEditingSkill] = useState(null);
+  const [isUpdatingSkill, setIsUpdatingSkill] = useState(false);
+
   const showNotification = (text, type = 'success') => {
     setActionMsg({ text, type });
     setTimeout(() => setActionMsg({ text: '', type: '' }), 4000);
@@ -194,7 +202,7 @@ export default function Admin({ onBackToPortfolio }) {
   const handleAddProject = async (e) => {
     e.preventDefault();
     if (!newProject.title.trim() || !newProject.outcome.trim()) {
-      showNotification('Title and outcome are required', 'error');
+      showNotification('Title and 1-line project summary are required', 'error');
       return;
     }
 
@@ -301,6 +309,98 @@ export default function Admin({ onBackToPortfolio }) {
       }
     } catch (err) {
       showNotification('Server communication error', 'error');
+    }
+  };
+
+  // Open edit modal for project
+  const handleOpenEditProject = (proj) => {
+    setEditingProject({
+      _id: proj._id,
+      title: proj.title || '',
+      type: proj.type || 'Web Application',
+      stack: proj.stack || '',
+      year: proj.year || new Date().getFullYear().toString(),
+      outcome: proj.outcome || proj.summary || '',
+      demoUrl: proj.demoUrl || '',
+      repoUrl: proj.repoUrl || ''
+    });
+  };
+
+  // Submit updated project
+  const handleUpdateProject = async (e) => {
+    e.preventDefault();
+    if (!editingProject) return;
+    if (!editingProject.title.trim() || !editingProject.outcome.trim()) {
+      showNotification('Title and 1-line project summary are required', 'error');
+      return;
+    }
+
+    setIsUpdatingProject(true);
+    try {
+      const res = await fetch(`${API_BASE}/projects/${editingProject._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(editingProject)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProjects((prev) => prev.map((p) => (p._id === editingProject._id ? data.data : p)));
+        showNotification('Project updated successfully! Changes are live on website.');
+        setEditingProject(null);
+      } else {
+        showNotification(data.message || 'Failed to update project', 'error');
+      }
+    } catch (err) {
+      showNotification('Server communication error', 'error');
+    } finally {
+      setIsUpdatingProject(false);
+    }
+  };
+
+  // Open edit modal for skill
+  const handleOpenEditSkill = (skill) => {
+    setEditingSkill({
+      _id: skill._id,
+      category: skill.category || 'Frontend',
+      name: skill.name || '',
+      level: skill.level || ''
+    });
+  };
+
+  // Submit updated skill
+  const handleUpdateSkill = async (e) => {
+    e.preventDefault();
+    if (!editingSkill) return;
+    if (!editingSkill.name.trim()) {
+      showNotification('Skill name is required', 'error');
+      return;
+    }
+
+    setIsUpdatingSkill(true);
+    try {
+      const res = await fetch(`${API_BASE}/skills/${editingSkill._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(editingSkill)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSkills((prev) => prev.map((s) => (s._id === editingSkill._id ? data.data : s)));
+        showNotification('Skill updated successfully! Changes are live on website.');
+        setEditingSkill(null);
+      } else {
+        showNotification(data.message || 'Failed to update skill', 'error');
+      }
+    } catch (err) {
+      showNotification('Server communication error', 'error');
+    } finally {
+      setIsUpdatingSkill(false);
     }
   };
 
@@ -558,7 +658,7 @@ export default function Admin({ onBackToPortfolio }) {
               {/* Add Project Form */}
               <div className="admin-form-panel">
                 <h3 className="panel-title">Add New Project</h3>
-                <p className="panel-desc">Any project added here immediately updates on the live website.</p>
+                <p className="panel-desc">Add a new project to your portfolio with tech stack and 1-line project summary.</p>
 
                 <form onSubmit={handleAddProject} className="admin-create-form">
                   <div className="form-group">
@@ -608,11 +708,11 @@ export default function Admin({ onBackToPortfolio }) {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">One-Line Measurable Outcome *</label>
+                    <label className="form-label">One-Line Project Summary *</label>
                     <textarea
                       rows="2"
                       className="form-textarea"
-                      placeholder="e.g. Reduced payload size 50% through dynamic code-splitting"
+                      placeholder="e.g. Modern fullstack e-commerce web platform with responsive cart and payment gateway"
                       value={newProject.outcome}
                       onChange={(e) => setNewProject({ ...newProject, outcome: e.target.value })}
                       required
@@ -663,16 +763,27 @@ export default function Admin({ onBackToPortfolio }) {
                           <p className="item-desc">{proj.outcome}</p>
                         </div>
                       </div>
-                      <div className="item-card-right">
+                      <div className="item-card-right" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         {proj._id && (
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteProject(proj._id)}
-                            className="item-del-btn"
-                            title="Delete project"
-                          >
-                            <i className="fa-solid fa-trash-can"></i>
-                          </button>
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEditProject(proj)}
+                              className="item-edit-btn"
+                              title="Edit project"
+                            >
+                              <i className="fa-solid fa-pen-to-square"></i>
+                              <span>Edit</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteProject(proj._id)}
+                              className="item-del-btn"
+                              title="Delete project"
+                            >
+                              <i className="fa-solid fa-trash-can"></i>
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>
@@ -755,14 +866,24 @@ export default function Admin({ onBackToPortfolio }) {
                             <span className="skill-badge-name">{sk.name}</span>
                             <span className="mono skill-badge-level">{sk.level}</span>
                             {sk._id && (
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteSkill(sk._id)}
-                                className="skill-del-btn"
-                                title="Remove skill"
-                              >
-                                &times;
-                              </button>
+                              <div className="skill-actions-group">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditSkill(sk)}
+                                  className="skill-edit-btn"
+                                  title="Edit skill"
+                                >
+                                  <i className="fa-solid fa-pen"></i>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteSkill(sk._id)}
+                                  className="skill-del-btn"
+                                  title="Remove skill"
+                                >
+                                  &times;
+                                </button>
+                              </div>
                             )}
                           </div>
                         ))}
@@ -861,6 +982,224 @@ export default function Admin({ onBackToPortfolio }) {
                   <i className="fa-solid fa-key"></i>
                   <span>Update Password in MongoDB</span>
                 </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* EDIT PROJECT MODAL */}
+        {editingProject && (
+          <div className="admin-modal-overlay" onClick={() => setEditingProject(null)}>
+            <div className="admin-modal-dialog" onClick={(e) => e.stopPropagation()}>
+              <div className="admin-modal-header">
+                <h3 className="admin-modal-title">
+                  <i className="fa-solid fa-pen-to-square" style={{ color: 'var(--lime)' }}></i>
+                  <span>Edit Project</span>
+                </h3>
+                <button
+                  type="button"
+                  className="admin-modal-close"
+                  onClick={() => setEditingProject(null)}
+                  aria-label="Close dialog"
+                >
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateProject} className="admin-create-form">
+                <div className="form-group">
+                  <label className="form-label">Project Title *</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editingProject.title}
+                    onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Type</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={editingProject.type}
+                      onChange={(e) => setEditingProject({ ...editingProject, type: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Year</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={editingProject.year}
+                      onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Tech Stack</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editingProject.stack}
+                    onChange={(e) => setEditingProject({ ...editingProject, stack: e.target.value })}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">One-Line Project Summary *</label>
+                  <textarea
+                    rows="2"
+                    className="form-textarea"
+                    placeholder="e.g. Modern fullstack e-commerce web platform with responsive cart and payment gateway"
+                    value={editingProject.outcome}
+                    onChange={(e) => setEditingProject({ ...editingProject, outcome: e.target.value })}
+                    required
+                  ></textarea>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Live Demo URL</label>
+                    <input
+                      type="url"
+                      className="form-input"
+                      value={editingProject.demoUrl}
+                      onChange={(e) => setEditingProject({ ...editingProject, demoUrl: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">GitHub Repo URL</label>
+                    <input
+                      type="url"
+                      className="form-input"
+                      value={editingProject.repoUrl}
+                      onChange={(e) => setEditingProject({ ...editingProject, repoUrl: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setEditingProject(null)}
+                    style={{ flex: 1, justifyContent: 'center' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={isUpdatingProject}
+                    style={{ flex: 1, justifyContent: 'center' }}
+                  >
+                    {isUpdatingProject ? (
+                      <>
+                        <i className="fa-solid fa-spinner fa-spin"></i>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-check"></i>
+                        <span>Save Changes</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* EDIT SKILL MODAL */}
+        {editingSkill && (
+          <div className="admin-modal-overlay" onClick={() => setEditingSkill(null)}>
+            <div className="admin-modal-dialog" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+              <div className="admin-modal-header">
+                <h3 className="admin-modal-title">
+                  <i className="fa-solid fa-pen" style={{ color: 'var(--lime)' }}></i>
+                  <span>Edit Skill</span>
+                </h3>
+                <button
+                  type="button"
+                  className="admin-modal-close"
+                  onClick={() => setEditingSkill(null)}
+                  aria-label="Close dialog"
+                >
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateSkill} className="admin-create-form">
+                <div className="form-group">
+                  <label className="form-label">Category</label>
+                  <select
+                    className="form-input"
+                    value={editingSkill.category}
+                    onChange={(e) => setEditingSkill({ ...editingSkill, category: e.target.value })}
+                    style={{ background: '#0E0F13', color: 'var(--text)' }}
+                  >
+                    <option value="Frontend">Frontend</option>
+                    <option value="Backend">Backend</option>
+                    <option value="Database">Database</option>
+                    <option value="Languages & Tools">Languages & Tools</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Skill Name *</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={editingSkill.name}
+                    onChange={(e) => setEditingSkill({ ...editingSkill, name: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Level / Descriptor</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. Production Ready, Core Framework"
+                    value={editingSkill.level}
+                    onChange={(e) => setEditingSkill({ ...editingSkill, level: e.target.value })}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setEditingSkill(null)}
+                    style={{ flex: 1, justifyContent: 'center' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={isUpdatingSkill}
+                    style={{ flex: 1, justifyContent: 'center' }}
+                  >
+                    {isUpdatingSkill ? (
+                      <>
+                        <i className="fa-solid fa-spinner fa-spin"></i>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-check"></i>
+                        <span>Save Changes</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </form>
             </div>
           </div>

@@ -376,7 +376,7 @@ export default function App() {
                     </div>
 
                     <p className="work-outcome">
-                      {project.outcome}
+                      {project.outcome || project.summary}
                     </p>
 
                     <div className="work-links">

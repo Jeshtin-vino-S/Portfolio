@@ -47,6 +47,36 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
+// PUT /api/skills/:id - Update skill (Admin protected)
+router.put('/:id', auth, async (req, res) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ success: false, message: 'MongoDB not connected.' });
+    }
+
+    const { category, name, level, order } = req.body;
+    const updateData = {};
+    if (category) updateData.category = category;
+    if (name) updateData.name = name.trim();
+    if (level !== undefined) updateData.level = level.trim();
+    if (order !== undefined) updateData.order = order;
+
+    const skill = await Skill.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+    if (!skill) {
+      return res.status(404).json({ success: false, message: 'Skill not found.' });
+    }
+
+    return res.json({ success: true, message: 'Skill updated successfully!', data: skill });
+  } catch (error) {
+    console.error('Update skill error:', error);
+    return res.status(500).json({ success: false, message: error.message || 'Error updating skill' });
+  }
+});
+
 // DELETE /api/skills/:id - Delete skill (Admin protected)
 router.delete('/:id', auth, async (req, res) => {
   try {

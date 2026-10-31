@@ -23,10 +23,11 @@ router.get('/', async (req, res) => {
 // POST /api/projects - Add new project (Admin protected)
 router.post('/', auth, async (req, res) => {
   try {
-    const { title, type, stack, year, outcome, demoUrl, repoUrl, num, order } = req.body;
+    const { title, type, stack, year, outcome, summary, demoUrl, repoUrl, num, order } = req.body;
+    const projectSummary = (outcome || summary || '').trim();
 
-    if (!title || !outcome) {
-      return res.status(400).json({ success: false, message: 'Title and measurable outcome are required.' });
+    if (!title || !projectSummary) {
+      return res.status(400).json({ success: false, message: 'Title and 1-line project summary are required.' });
     }
 
     if (mongoose.connection.readyState !== 1) {
@@ -43,7 +44,7 @@ router.post('/', auth, async (req, res) => {
       type: type || 'Web Application',
       stack: stack || 'React.js · JavaScript',
       year: year || new Date().getFullYear().toString(),
-      outcome: outcome.trim(),
+      outcome: projectSummary,
       demoUrl: demoUrl || '',
       repoUrl: repoUrl || '',
       order: order !== undefined ? order : count + 1
@@ -63,7 +64,12 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(503).json({ success: false, message: 'MongoDB not connected.' });
     }
 
-    const project = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const updateData = { ...req.body };
+    if (updateData.summary && !updateData.outcome) {
+      updateData.outcome = updateData.summary;
+    }
+
+    const project = await Project.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
     if (!project) {
       return res.status(404).json({ success: false, message: 'Project not found.' });
     }
