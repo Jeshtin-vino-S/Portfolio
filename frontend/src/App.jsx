@@ -7,77 +7,6 @@ import myImage from './assets/my-image.png';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
-// Default Projects Fallback
-const defaultProjects = [
-  {
-    num: '01',
-    title: 'E-Commerce Storefront',
-    type: 'Web Application',
-    stack: 'React.js · JavaScript · CSS3',
-    year: '2024',
-    outcome: 'Engineered responsive product catalog cutting interaction latency by 45%',
-    demoUrl: 'https://jeshtin-vino-s.github.io/E-commerse/',
-    repoUrl: 'https://github.com/jeshtin-vino-s/E-commerse'
-  },
-  {
-    num: '02',
-    title: 'Foodie Restaurant Platform',
-    type: 'Web Application',
-    stack: 'JavaScript · HTML5 · CSS3',
-    year: '2024',
-    outcome: 'Streamlined online food ordering flow boosting user session retention by 30%',
-    demoUrl: 'https://jeshtin-vino-s.github.io/foodie/',
-    repoUrl: 'https://github.com/jeshtin-vino-s/foodie'
-  },
-  {
-    num: '03',
-    title: 'Interactive RPS Arena',
-    type: 'Browser Game',
-    stack: 'JavaScript · State Engine',
-    year: '2024',
-    outcome: 'Zero-delay client-side state machine delivering real-time scoring feedback',
-    demoUrl: 'https://jeshtin-vino-s.github.io/Rock-paper-scissor/',
-    repoUrl: 'https://github.com/jeshtin-vino-s/Rock-paper-scissor'
-  },
-  {
-    num: '04',
-    title: 'Precision Web Calculator',
-    type: 'Web Utility',
-    stack: 'JavaScript · Arithmetic UI',
-    year: '2024',
-    outcome: 'Instant expression evaluation with edge-case arithmetic error handling',
-    demoUrl: 'https://jeshtin-vino-s.github.io/calculator/',
-    repoUrl: 'https://github.com/jeshtin-vino-s/calculator'
-  }
-];
-
-// Default Skills Fallback
-const defaultSkills = [
-  { category: 'Frontend', name: 'React.js', level: 'Core Framework' },
-  { category: 'Frontend', name: 'HTML / HTML5', level: 'Semantic' },
-  { category: 'Frontend', name: 'CSS / CSS3', level: 'Responsive & Flexbox' },
-  { category: 'Frontend', name: 'Component Design', level: 'Modular' },
-  { category: 'Frontend', name: 'DOM Manipulation', level: 'Native APIs' },
-
-  { category: 'Backend', name: 'Node.js', level: 'Runtime Engine' },
-  { category: 'Backend', name: 'Express.js', level: 'Web Server Framework' },
-  { category: 'Backend', name: 'RESTful APIs', level: 'Endpoints & Routing' },
-  { category: 'Backend', name: 'JSON Data Handling', level: 'Pipelines' },
-  { category: 'Backend', name: 'Client-Server Arch', level: 'Structured' },
-
-  { category: 'Database', name: 'MongoDB', level: 'NoSQL Document DB' },
-  { category: 'Database', name: 'MySQL', level: 'Relational SQL' },
-  { category: 'Database', name: 'CRUD Operations', level: 'Data Persistence' },
-  { category: 'Database', name: 'Schema & Models', level: 'Structured Data' },
-  { category: 'Database', name: 'Database Queries', level: 'Optimized' },
-
-  { category: 'Languages & Tools', name: 'JavaScript (ES6+)', level: 'Primary Language' },
-  { category: 'Languages & Tools', name: 'Python', level: 'Scripting & Logic' },
-  { category: 'Languages & Tools', name: 'Git & GitHub', level: 'Version Control' },
-  { category: 'Languages & Tools', name: 'Vite & NPM', level: 'Modern Toolchain' },
-  { category: 'Languages & Tools', name: 'VS Code', level: 'Dev Environment' }
-];
-
 export default function App() {
   const [isAdminView, setIsAdminView] = useState(
     typeof window !== 'undefined' && window.location.pathname === '/admin'
@@ -85,9 +14,10 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Dynamic Portfolio Data from Backend API
-  const [projects, setProjects] = useState(defaultProjects);
-  const [skills, setSkills] = useState(defaultSkills);
+  // Dynamic Portfolio Data directly fetched from MongoDB Database
+  const [projects, setProjects] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [loadingData, setLoadingData] = useState(true);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -117,6 +47,7 @@ export default function App() {
   // Fetch live projects and skills from MongoDB Backend API
   useEffect(() => {
     const fetchLiveContent = async () => {
+      setLoadingData(true);
       try {
         const [projRes, skillsRes] = await Promise.all([
           fetch(`${API_BASE}/projects`).catch(() => null),
@@ -125,19 +56,21 @@ export default function App() {
 
         if (projRes && projRes.ok) {
           const pData = await projRes.json();
-          if (pData.success && Array.isArray(pData.data) && pData.data.length > 0) {
+          if (pData.success && Array.isArray(pData.data)) {
             setProjects(pData.data);
           }
         }
 
         if (skillsRes && skillsRes.ok) {
           const sData = await skillsRes.json();
-          if (sData.success && Array.isArray(sData.data) && sData.data.length > 0) {
+          if (sData.success && Array.isArray(sData.data)) {
             setSkills(sData.data);
           }
         }
       } catch (err) {
-        console.log('Note: Backend offline or loading default portfolio data.');
+        console.log('Note: Backend offline or database connecting.');
+      } finally {
+        setLoadingData(false);
       }
     };
 
@@ -421,49 +354,60 @@ export default function App() {
             <h2 className="section-title">Selected Work</h2>
 
             <div className="work-list">
-              {projects.map((project, idx) => (
-                <article className="work-row" key={project._id || project.num || idx}>
-                  <div className="work-num mono">{project.num || String(idx + 1).padStart(2, '0')}</div>
+              {loadingData && projects.length === 0 ? (
+                <div style={{ padding: '3.5rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }} className="mono">
+                  <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '0.6rem', color: 'var(--accent-lime)' }}></i>
+                  // Loading live projects from database...
+                </div>
+              ) : projects.length === 0 ? (
+                <div style={{ padding: '3.5rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }} className="mono">
+                  // No projects found in database. Add new projects via <a href="/admin" onClick={(e) => { e.preventDefault(); setIsAdminView(true); }} style={{ color: 'var(--accent-lime)', textDecoration: 'underline' }}>Admin CMS</a>.
+                </div>
+              ) : (
+                projects.map((project, idx) => (
+                  <article className="work-row" key={project._id || project.num || idx}>
+                    <div className="work-num mono">{project.num || String(idx + 1).padStart(2, '0')}</div>
 
-                  <div className="work-meta">
-                    <h3 className="work-title">{project.title}</h3>
-                    <span className="work-tagline mono">
-                      {project.type} · {project.stack} · {project.year}
-                    </span>
-                  </div>
+                    <div className="work-meta">
+                      <h3 className="work-title">{project.title}</h3>
+                      <span className="work-tagline mono">
+                        {project.type} · {project.stack} · {project.year}
+                      </span>
+                    </div>
 
-                  <p className="work-outcome">
-                    {project.outcome}
-                  </p>
+                    <p className="work-outcome">
+                      {project.outcome}
+                    </p>
 
-                  <div className="work-links">
-                    {project.demoUrl && (
-                      <a
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="work-link"
-                        aria-label={`Live demo for ${project.title}`}
-                      >
-                        <span>Live Demo</span>
-                        <span className="work-arrow" aria-hidden="true">↗</span>
-                      </a>
-                    )}
-                    {project.repoUrl && (
-                      <a
-                        href={project.repoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="work-link"
-                        aria-label={`Source code on GitHub for ${project.title}`}
-                      >
-                        <i className="fa-brands fa-github" aria-hidden="true"></i>
-                        <span>Code</span>
-                      </a>
-                    )}
-                  </div>
-                </article>
-              ))}
+                    <div className="work-links">
+                      {project.demoUrl && (
+                        <a
+                          href={project.demoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="work-link"
+                          aria-label={`Live demo for ${project.title}`}
+                        >
+                          <span>Live Demo</span>
+                          <span className="work-arrow" aria-hidden="true">↗</span>
+                        </a>
+                      )}
+                      {project.repoUrl && (
+                        <a
+                          href={project.repoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="work-link"
+                          aria-label={`Source code on GitHub for ${project.title}`}
+                        >
+                          <i className="fa-brands fa-github" aria-hidden="true"></i>
+                          <span>Code</span>
+                        </a>
+                      )}
+                    </div>
+                  </article>
+                ))
+              )}
             </div>
           </div>
         </section>
@@ -482,12 +426,22 @@ export default function App() {
                   <h3>Frontend</h3>
                 </div>
                 <ul className="skills-list">
-                  {frontendSkills.map((sk, i) => (
-                    <li key={sk._id || i}>
-                      <span className="skill-name">{sk.name}</span>
-                      <span className="skill-level">{sk.level}</span>
+                  {loadingData && skills.length === 0 ? (
+                    <li style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }} className="mono">
+                      Loading...
                     </li>
-                  ))}
+                  ) : frontendSkills.length === 0 ? (
+                    <li style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }} className="mono">
+                      No skills added yet
+                    </li>
+                  ) : (
+                    frontendSkills.map((sk, i) => (
+                      <li key={sk._id || i}>
+                        <span className="skill-name">{sk.name}</span>
+                        <span className="skill-level">{sk.level}</span>
+                      </li>
+                    ))
+                  )}
                 </ul>
               </div>
 
@@ -498,12 +452,22 @@ export default function App() {
                   <h3>Backend</h3>
                 </div>
                 <ul className="skills-list">
-                  {backendSkills.map((sk, i) => (
-                    <li key={sk._id || i}>
-                      <span className="skill-name">{sk.name}</span>
-                      <span className="skill-level">{sk.level}</span>
+                  {loadingData && skills.length === 0 ? (
+                    <li style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }} className="mono">
+                      Loading...
                     </li>
-                  ))}
+                  ) : backendSkills.length === 0 ? (
+                    <li style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }} className="mono">
+                      No skills added yet
+                    </li>
+                  ) : (
+                    backendSkills.map((sk, i) => (
+                      <li key={sk._id || i}>
+                        <span className="skill-name">{sk.name}</span>
+                        <span className="skill-level">{sk.level}</span>
+                      </li>
+                    ))
+                  )}
                 </ul>
               </div>
 
@@ -514,12 +478,22 @@ export default function App() {
                   <h3>Database</h3>
                 </div>
                 <ul className="skills-list">
-                  {dbSkills.map((sk, i) => (
-                    <li key={sk._id || i}>
-                      <span className="skill-name">{sk.name}</span>
-                      <span className="skill-level">{sk.level}</span>
+                  {loadingData && skills.length === 0 ? (
+                    <li style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }} className="mono">
+                      Loading...
                     </li>
-                  ))}
+                  ) : dbSkills.length === 0 ? (
+                    <li style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }} className="mono">
+                      No skills added yet
+                    </li>
+                  ) : (
+                    dbSkills.map((sk, i) => (
+                      <li key={sk._id || i}>
+                        <span className="skill-name">{sk.name}</span>
+                        <span className="skill-level">{sk.level}</span>
+                      </li>
+                    ))
+                  )}
                 </ul>
               </div>
 
@@ -530,12 +504,22 @@ export default function App() {
                   <h3>Languages & Tools</h3>
                 </div>
                 <ul className="skills-list">
-                  {langSkills.map((sk, i) => (
-                    <li key={sk._id || i}>
-                      <span className="skill-name">{sk.name}</span>
-                      <span className="skill-level">{sk.level}</span>
+                  {loadingData && skills.length === 0 ? (
+                    <li style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }} className="mono">
+                      Loading...
                     </li>
-                  ))}
+                  ) : langSkills.length === 0 ? (
+                    <li style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.875rem' }} className="mono">
+                      No skills added yet
+                    </li>
+                  ) : (
+                    langSkills.map((sk, i) => (
+                      <li key={sk._id || i}>
+                        <span className="skill-name">{sk.name}</span>
+                        <span className="skill-level">{sk.level}</span>
+                      </li>
+                    ))
+                  )}
                 </ul>
               </div>
             </div>
@@ -712,7 +696,7 @@ export default function App() {
                   <span>GitHub</span>
                 </a>
                 <a
-                  href="https://linkedin.com"
+                  href="https://www.linkedin.com/in/jeshtin-vino-s-b70935280?utm_source=share_via&utm_content=profile&utm_medium=member_android"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-link"
