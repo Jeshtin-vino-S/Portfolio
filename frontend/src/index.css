@@ -454,11 +454,11 @@ header.site-header {
 }
 
 /* ==========================================================================
-   4. SKILLS SECTION (3 COLUMNS)
+   4. SKILLS SECTION (2x2 BALANCED GRID)
    ========================================================================== */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 28px;
 }
 
@@ -466,8 +466,10 @@ header.site-header {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 36px 28px;
+  padding: 32px 28px;
   transition: var(--transition);
+  display: flex;
+  flex-direction: column;
 }
 
 .skills-col:hover {
@@ -500,27 +502,56 @@ header.site-header {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
 .skills-list li {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(242, 240, 234, 0.06);
+  border-radius: 6px;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 13.5px;
   color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.skills-list li:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(198, 255, 61, 0.25);
+  transform: translateX(4px);
 }
 
 .skills-list li span.skill-name {
   color: var(--text);
   font-weight: 500;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
 .skills-list li span.skill-level {
   font-size: 11px;
   color: var(--lime);
-  opacity: 0.8;
+  background: var(--lime-dim);
+  border: 1px solid rgba(198, 255, 61, 0.18);
+  padding: 3px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  text-align: right;
+  flex-shrink: 0;
+  font-weight: 400;
+}
+
+@media screen and (max-width: 900px) {
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 }
 
 /* ==========================================================================
@@ -1300,6 +1331,13 @@ footer.site-footer {
 
   .skills-list li {
     font-size: 12px;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .skills-list li span.skill-level {
+    font-size: 10px;
+    padding: 2px 7px;
   }
 
   .about-photo-wrapper {
