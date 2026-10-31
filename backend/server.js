@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 
 import contactRoutes from './routes/contact.js';
@@ -9,6 +11,10 @@ import skillsRoutes from './routes/skills.js';
 import adminRoutes from './routes/admin.js';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const frontendDist = path.join(__dirname, '../frontend/dist');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -36,13 +42,19 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-app.get('/', (req, res) => {
-  res.send('🚀 Jeshtin Vino Portfolio Backend API is running!');
-});
+// Serve frontend static files if built
+app.use(express.static(frontendDist));
 
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).json({ success: false, message: 'API route not found' });
+// SPA Fallback: Route all non-API paths to React index.html
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ success: false, message: 'API route not found' });
+  }
+  res.sendFile(path.join(frontendDist, 'index.html'), (err) => {
+    if (err) {
+      res.send('🚀 Jeshtin Vino Portfolio Backend API is running!');
+    }
+  });
 });
 
 // Start Server with Port Fallback
@@ -61,4 +73,3 @@ server.on('error', (err) => {
     console.error('Server error:', err);
   }
 });
-

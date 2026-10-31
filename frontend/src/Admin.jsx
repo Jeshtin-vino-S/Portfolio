@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 export default function Admin({ onBackToPortfolio }) {
   const [token, setToken] = useState(localStorage.getItem('portfolio_admin_token') || '');

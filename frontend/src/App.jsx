@@ -5,6 +5,8 @@ import Admin from './Admin.jsx';
 // Profile & Asset Images
 import myImage from './assets/my-image.png';
 
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
 // Default Projects Fallback
 const defaultProjects = [
   {
@@ -117,8 +119,8 @@ export default function App() {
     const fetchLiveContent = async () => {
       try {
         const [projRes, skillsRes] = await Promise.all([
-          fetch('http://localhost:5000/api/projects').catch(() => null),
-          fetch('http://localhost:5000/api/skills').catch(() => null)
+          fetch(`${API_BASE}/projects`).catch(() => null),
+          fetch(`${API_BASE}/skills`).catch(() => null)
         ]);
 
         if (projRes && projRes.ok) {
@@ -274,7 +276,7 @@ export default function App() {
     if (isValid) {
       setIsSubmitting(true);
       try {
-        const res = await fetch('http://localhost:5000/api/contact', {
+        const res = await fetch(`${API_BASE}/contact`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
