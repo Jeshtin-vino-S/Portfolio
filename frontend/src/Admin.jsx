@@ -756,7 +756,7 @@ export default function Admin({ onBackToPortfolio }) {
                   {projects.map((proj, idx) => (
                     <div key={proj._id || idx} className="admin-item-card">
                       <div className="item-card-left">
-                        <span className="mono item-num">#{proj.num || String(idx + 1).padStart(2, '0')}</span>
+                        <span className="mono item-num">#{String(idx + 1).padStart(2, '0')}</span>
                         <div>
                           <h4 className="item-title">{proj.title}</h4>
                           <span className="mono item-sub">{proj.type} · {proj.stack} · {proj.year}</span>

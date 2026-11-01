@@ -365,8 +365,8 @@ export default function App() {
                 </div>
               ) : (
                 projects.map((project, idx) => (
-                  <article className="work-row" key={project._id || project.num || idx}>
-                    <div className="work-num mono">{project.num || String(idx + 1).padStart(2, '0')}</div>
+                  <article className="work-row" key={project._id || idx}>
+                    <div className="work-num mono">{String(idx + 1).padStart(2, '0')}</div>
 
                     <div className="work-meta">
                       <h3 className="work-title">{project.title}</h3>
