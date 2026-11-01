@@ -351,7 +351,7 @@ export default function App() {
         <section className="work-section" id="work">
           <div className="container">
             <span className="section-label">01 // Portfolio</span>
-            <h2 className="section-title">Selected Work</h2>
+            <h2 className="section-title">My Work</h2>
 
             <div className="work-list">
               {loadingData && projects.length === 0 ? (
