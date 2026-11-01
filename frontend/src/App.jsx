@@ -357,7 +357,7 @@ export default function App() {
               {loadingData && projects.length === 0 ? (
                 <div style={{ padding: '3.5rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }} className="mono">
                   <i className="fa-solid fa-spinner fa-spin" style={{ marginRight: '0.6rem', color: 'var(--accent-lime)' }}></i>
-                  // Connecting to MongoDB & fetching projects...
+                  // Loading projects...
                 </div>
               ) : projects.length === 0 ? (
                 <div style={{ padding: '3.5rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }} className="mono">
@@ -608,7 +608,7 @@ export default function App() {
                   Send a <span className="highlight">Message</span>
                 </h3>
                 <p className="contact-form-desc">
-                  Messages are sent directly and stored securely in MongoDB Atlas database.
+                  Message sent successfully!
                 </p>
               </div>
 
