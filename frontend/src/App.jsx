@@ -268,7 +268,7 @@ export default function App() {
               <a href="/contact" onClick={(e) => scrollToSection(e, 'contact')}>Contact</a>
             </nav>
 
-            <div className="status-badge" title="Actively considering web development roles">
+            <div className="status-badge" title="Actively considering full stack development roles">
               <span className="pulse-dot" aria-hidden="true"></span>
               <span>Open to work</span>
             </div>
@@ -290,12 +290,12 @@ export default function App() {
         <section className="hero-section" id="hero">
           <div className="container hero-grid">
             <div className="hero-content">
-              <span className="section-label">Web Developer</span>
+              <span className="section-label">Full Stack Developer</span>
               <h1 className="hero-headline">
                 Jeshtin ships web apps that <span className="highlight">feel alive.</span>
               </h1>
               <p className="hero-subtext">
-                Web developer specializing in React.js, Node.js, Express.js, and databases (MongoDB, MySQL).
+                Full stack developer specializing in React.js, Node.js, Express.js, and databases (MongoDB, MySQL).
                 I build responsive, full-stack web applications powered by JavaScript and Python.
               </p>
               <div className="hero-actions">
@@ -332,7 +332,7 @@ export default function App() {
                 <code>
                   <span className="code-keyword">const</span> <span className="code-var">developer</span> = &#123;{'\n'}
                   {'  '}<span className="code-prop">name</span>: <span className="code-str">'Jeshtin Vino S'</span>,{'\n'}
-                  {'  '}<span className="code-prop">role</span>: <span className="code-str">'Web Developer'</span>,{'\n'}
+                  {'  '}<span className="code-prop">role</span>: <span className="code-str">'Full Stack Developer'</span>,{'\n'}
                   {'  '}<span className="code-prop">education</span>: <span className="code-str">'MCA (2026)'</span>,{'\n'}
                   {'  '}<span className="code-prop">languages</span>: [<span className="code-str">'JavaScript'</span>, <span className="code-str">'Python'</span>],{'\n'}
                   {'  '}<span className="code-prop">frontend</span>: [<span className="code-str">'HTML'</span>, <span className="code-str">'CSS'</span>, <span className="code-str">'React.js'</span>],{'\n'}
@@ -361,7 +361,7 @@ export default function App() {
                 </div>
               ) : projects.length === 0 ? (
                 <div style={{ padding: '3.5rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }} className="mono">
-                  // No projects in database. Add new projects anytime in the <a href="/admin" onClick={(e) => { e.preventDefault(); setIsAdminView(true); }} style={{ color: 'var(--accent-lime)', textDecoration: 'underline' }}>Admin CMS</a>.
+                  // Currently no projects added yet.
                 </div>
               ) : (
                 projects.map((project, idx) => (
@@ -532,7 +532,7 @@ export default function App() {
             <div className="about-photo-wrapper">
               <img
                 src={myImage}
-                alt="Jeshtin Vino - Web Developer"
+                alt="Jeshtin Vino - Full Stack Developer"
                 className="about-photo"
                 loading="lazy"
               />
@@ -541,7 +541,7 @@ export default function App() {
             <div className="about-text">
               <span className="section-label">03 // Background</span>
               <p className="about-lead">
-                I'm Jeshtin Vino, a web developer based in Thanjavur, Tamil Nadu, pursuing my MCA (graduating in 2026).
+                I'm Jeshtin Vino, a full stack developer based in Thanjavur, Tamil Nadu, pursuing my MCA (graduating in 2026).
               </p>
               <p className="about-body">
                 I build responsive, full-stack web applications using React.js, HTML, and CSS on the frontend,
@@ -556,7 +556,7 @@ export default function App() {
                 </div>
                 <div className="stat-item">
                   <span className="stat-value">Full-Stack</span>
-                  <span className="stat-label">Web Dev Focus</span>
+                  <span className="stat-label">Development</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-value">Clean</span>
